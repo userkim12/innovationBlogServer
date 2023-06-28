@@ -24,7 +24,7 @@ public class BoardController {
         Board savedBoard = boardService.createBoard(boardPostDto, request);
 
         BoardResponseDto response = boardService.entityToResponseDto(savedBoard);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
@@ -33,7 +33,7 @@ public class BoardController {
         Board board = boardService.findBoard(boardId);
 
         BoardResponseDto response = boardService.entityToResponseDto(board);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
@@ -42,7 +42,7 @@ public class BoardController {
         List<Board> boards = boardService.findAllBoards();
 
         List<BoardResponseDto> responses = boardService.entityListToResponseDtoList(boards);
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @PatchMapping("/board/{boardId}")
@@ -53,7 +53,7 @@ public class BoardController {
         Board patchedcBoard = boardService.updateBoard(boardId, boardPatchDto, request);
 
         BoardResponseDto response = boardService.entityToResponseDto(patchedcBoard);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/board/{boardId}")
@@ -63,6 +63,6 @@ public class BoardController {
 
         boardService.deleteBoard(boardId, request);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
