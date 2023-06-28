@@ -17,11 +17,18 @@ public class Board extends BaseTime {
 
     @Column
     private String title;
-    @Column
-    private String username;
-    @Column
-    private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "username")
+    private User user;
+
     @Column
     private String content;
+
+    public Board(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }
 
