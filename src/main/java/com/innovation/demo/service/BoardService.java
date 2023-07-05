@@ -4,11 +4,11 @@ import com.innovation.demo.dto.BoardPatchDto;
 import com.innovation.demo.dto.BoardPostDto;
 import com.innovation.demo.dto.BoardResponseDto;
 import com.innovation.demo.entity.Board;
+import com.innovation.demo.entity.User;
 import com.innovation.demo.mapper.BoardMapper;
 import com.innovation.demo.repository.BoardRepository;
 import com.innovation.demo.repository.UserRepository;
 import com.innovation.demo.util.JwtUtil;
-import com.innovation.demo.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
@@ -29,7 +30,7 @@ public class BoardService {
     @Value("${token.name.LoginToken}")
     private String LoginToken;
 
-    @Transactional
+
     public Board createBoard(BoardPostDto boardPostDto, HttpServletRequest request) {
         String username = jwtUtil.getUsernameFromRequest(LoginToken,request);
 
@@ -43,13 +44,14 @@ public class BoardService {
     }
 
 
-
+//    @Transactional
     public Board findBoard(long boardId) {
 
         return findVerifiedBoard(boardId);
     }
 
 
+//    @Transactional(readOnly = true)
     public List<Board> findAllBoards() {
 
         return boardRepository.findAllByOrderByCreatedAtDesc();
@@ -70,6 +72,7 @@ public class BoardService {
 
         return boardRepository.save(findBoard);
     }
+
 
 
     public void deleteBoard(long boardId, HttpServletRequest request) {
