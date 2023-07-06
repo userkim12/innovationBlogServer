@@ -3,7 +3,9 @@ package com.innovation.demo.controller;
 import com.innovation.demo.dto.LoginRequestDto;
 import com.innovation.demo.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +18,17 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse res){
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto, HttpServletResponse res){
         userService.login(loginRequestDto, res);
+
+        return ResponseEntity.ok().body("login ok!");
     }
 
     @PostMapping("/signup")
-    public void signup(@RequestBody LoginRequestDto loginRequestDto){
+    public ResponseEntity<?> signup(@RequestBody @Valid LoginRequestDto loginRequestDto){
         userService.signup(loginRequestDto);
+
+        return ResponseEntity.ok().body("Singup Success");
     }
 
 }

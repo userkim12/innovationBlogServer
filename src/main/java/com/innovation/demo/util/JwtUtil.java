@@ -93,7 +93,7 @@ public class JwtUtil implements InitializingBean {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            log.error("토큰이 유효하지 않습니다.");
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
         } catch (UnsupportedJwtException e) {
@@ -159,11 +159,26 @@ public class JwtUtil implements InitializingBean {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        log.error("Not Found Token");
-        throw new NullPointerException("Not Found Token");
+        log.error("토큰이 유효하지 않습니다.");
+        throw new NullPointerException("토큰이 유효하지 않습니다.");
     }
 
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public String getUsernameFromToken(String token) {
+        try {
+            String subToken = substringToken(URLDecoder.decode(token, "UTF-8"));
+            if(validateToken(subToken)){
+                Claims body = getUserInfoFromToken(subToken);
+                log.error(body.get("username", String.class));
+                return body.get("username", String.class);
+            }
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 }

@@ -17,3 +17,6 @@ jwt:
 token:
   name:
     LoginToken: LoginToken
+
+admin:
+  username: admin

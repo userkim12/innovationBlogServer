@@ -4,9 +4,12 @@ package com.innovation.demo.mapper;
 import com.innovation.demo.dto.BoardPatchDto;
 import com.innovation.demo.dto.BoardPostDto;
 import com.innovation.demo.dto.BoardResponseDto;
+import com.innovation.demo.dto.CommentResponseDto;
 import com.innovation.demo.entity.Board;
 import org.mapstruct.Mapper;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -27,7 +30,16 @@ public interface BoardMapper {
         String content = board.getContent();
         String username = board.getUser().getUsername();
         String createdAt = board.getCreatedAt();
+        List<CommentResponseDto> commentResponseDtos = new ArrayList<>(board.getCommentList().stream().map(CommentResponseDto::new).toList());
+        Collections.reverse(commentResponseDtos);
 
-        return BoardResponseDto.builder().title(title).boardId(id).content(content).username(username).createdAt(createdAt).build();
+        return BoardResponseDto.builder()
+                .title(title)
+                .boardId(id)
+                .content(content)
+                .username(username)
+                .createdAt(createdAt)
+                .comments(commentResponseDtos)
+                .build();
     }
 }

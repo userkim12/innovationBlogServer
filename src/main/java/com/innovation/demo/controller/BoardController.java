@@ -20,8 +20,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/board")
-    public ResponseEntity<?> postBoard(@RequestBody BoardPostDto boardPostDto, HttpServletRequest request) {
-        Board savedBoard = boardService.createBoard(boardPostDto, request);
+    public ResponseEntity<?> postBoard(@RequestBody BoardPostDto boardPostDto, @RequestHeader("Authorization") String token) {
+        Board savedBoard = boardService.createBoard(boardPostDto, token);
 
         BoardResponseDto response = boardService.entityToResponseDto(savedBoard);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -46,22 +46,22 @@ public class BoardController {
     }
 
     @PatchMapping("/board/{boardId}")
-    public ResponseEntity<?> patchBoard(@PathVariable long boardId,
+    public ResponseEntity<?> patchBoard(@PathVariable Long boardId,
                                         @RequestBody BoardPatchDto boardPatchDto,
-                                        HttpServletRequest request) {
+                                        @RequestHeader("Authorization") String token) {
 
-        Board patchedcBoard = boardService.updateBoard(boardId, boardPatchDto, request);
+        Board patchedcBoard = boardService.updateBoard(boardId, boardPatchDto, token);
 
         BoardResponseDto response = boardService.entityToResponseDto(patchedcBoard);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/board/{boardId}")
-    public ResponseEntity<?> deleteBoard(@PathVariable long boardId,
-                                         HttpServletRequest request) {
+    public ResponseEntity<?> deleteBoard(@PathVariable Long boardId,
+                                         @RequestHeader("Authorization") String token) {
 
 
-        boardService.deleteBoard(boardId, request);
+        boardService.deleteBoard(boardId, token);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

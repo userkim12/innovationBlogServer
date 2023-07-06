@@ -30,11 +30,13 @@ public class BoardService {
     @Value("${token.name.LoginToken}")
     private String LoginToken;
 
+    @Value("${admin.username}")
+    private String adminName;
 
-    public Board createBoard(BoardPostDto boardPostDto, HttpServletRequest request) {
-        String username = jwtUtil.getUsernameFromRequest(LoginToken,request);
+    public Board createBoard(BoardPostDto boardPostDto, String token) {
+        String username = jwtUtil.getUsernameFromToken(token);
 
-        Board board = new Board(boardPostDto.getTitle(),boardPostDto.getContent());
+        Board board = new Board(boardPostDto.getTitle(), boardPostDto.getContent());
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
@@ -44,28 +46,29 @@ public class BoardService {
     }
 
 
-//    @Transactional
+    //    @Transactional
     public Board findBoard(long boardId) {
 
         return findVerifiedBoard(boardId);
     }
 
 
-//    @Transactional(readOnly = true)
+    //    @Transactional(readOnly = true)
     public List<Board> findAllBoards() {
 
         return boardRepository.findAllByOrderByCreatedAtDesc();
     }
 
-    public Board updateBoard(long boardId, BoardPatchDto boardPatchDto, HttpServletRequest request) {
+    public Board updateBoard(long boardId, BoardPatchDto boardPatchDto, String token) {
         Board board = boardMapper.BoardPatchDtoToBoard(boardPatchDto);
         Board findBoard = findVerifiedBoard(boardId);
 
         String username1 = findBoard.getUser().getUsername();
-        String username2 = jwtUtil.getUsernameFromRequest("LoginToken", request);
+        String username2 = jwtUtil.getUsernameFromToken(token);
 
-
-        compareUsernames(username1, username2);
+        if(!username2.equals(adminName)) {
+            compareUsernames(username1, username2);
+        }
 
         Optional.ofNullable(board.getTitle()).ifPresent(findBoard::setTitle);
         Optional.ofNullable(board.getContent()).ifPresent(findBoard::setContent);
@@ -74,14 +77,15 @@ public class BoardService {
     }
 
 
-
-    public void deleteBoard(long boardId, HttpServletRequest request) {
+    public void deleteBoard(long boardId, String token) {
         Board findBoard = findVerifiedBoard(boardId);
+
         String username1 = findBoard.getUser().getUsername();
+        String username2 = jwtUtil.getUsernameFromToken(token);
 
-        String username2 = jwtUtil.getUsernameFromRequest("LoginToken", request);
-
-        compareUsernames(username1, username2);
+        if(!username2.equals(adminName)) {
+            compareUsernames(username1, username2);
+        }
 
         boardRepository.delete(findBoard);
     }
@@ -117,8 +121,8 @@ public class BoardService {
     }
 
     private void compareUsernames(String username1, String username2) {
-        if(!username1.equals(username2))
-            throw new RuntimeException("작성자가 일치하지 않습니다.");
+        if (!username1.equals(username2))
+            throw new RuntimeException("작성자만 삭제/수정할 수 있습니다.");
     }
 
     private Board findVerifiedBoard(long boardId) {

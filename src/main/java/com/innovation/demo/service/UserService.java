@@ -26,6 +26,9 @@ public class UserService {
     @Value("${token.name.LoginToken}")
     private String headerName;
 
+    @Value("${admin.username}")
+    private String adminName;
+
     public void signup(LoginRequestDto loginRequestDto) {
         String username = loginRequestDto.getUsername();
         String password = passwordEncoder.encode(loginRequestDto.getPassword());
@@ -33,10 +36,14 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> findUser = userRepository.findByUsername(username);
         if (findUser.isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+            throw new IllegalArgumentException("중복된 username 입니다.");
         }
 
         User user = new User(username, password);
+        if (user.getUsername().equals(adminName)) {
+            user.changeAdminRole();
+        }
+
         userRepository.save(user);
     }
 
@@ -46,12 +53,12 @@ public class UserService {
 
         // 회원 가입여부 확인
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
+                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
         );
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
         }
         Map<String,String> claims = new HashMap<>();
 
