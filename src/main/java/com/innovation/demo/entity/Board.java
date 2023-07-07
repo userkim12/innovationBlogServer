@@ -28,7 +28,7 @@ public class Board extends BaseTime {
     @JoinColumn(name = "username")
     private User user;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
     public Board(String title, String content) {

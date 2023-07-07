@@ -23,7 +23,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    @Value("${token.name.LoginToken}")
+    @Value("${token.name.Authorization}")
     private String headerName;
 
     @Value("${admin.username}")
@@ -60,13 +60,14 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
         }
-        Map<String,String> claims = new HashMap<>();
+        Map<String, String> claims = new HashMap<>();
 
         claims.put("username", user.getUsername());
 
         // JWT 생성 후 쿠키로 res에 추가
         String token = jwtUtil.createToken(claims);
-        jwtUtil.addJwtToCookie(headerName, token, res);
+//        jwtUtil.addJwtToCookie(headerName, token, res);
+        jwtUtil.addJwtToHeaders(headerName, token, res);
     }
 
 

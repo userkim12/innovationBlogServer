@@ -27,7 +27,7 @@ public class BoardService {
     private final BoardMapper boardMapper;
     private final JwtUtil jwtUtil;
 
-    @Value("${token.name.LoginToken}")
+    @Value("${token.name.Authorization}")
     private String LoginToken;
 
     @Value("${admin.username}")

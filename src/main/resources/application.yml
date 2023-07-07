@@ -16,7 +16,7 @@ jwt:
   secret: 66CI67KoMuqzvOygnOynhO2WieyekOykgOyasCbsi6DtmJXsnoXri4jri6Q=
 token:
   name:
-    LoginToken: LoginToken
+    Authorization: Authorization
 
 admin:
   username: admin
