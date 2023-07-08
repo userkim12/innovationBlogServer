@@ -70,16 +70,6 @@ public class JwtUtil implements InitializingBean {
                         .compact();
     }
 
-    public void addJwtToHeaders(String header, String token, HttpServletResponse res) {
-        try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
-
-            // Response 객체에 Cookie 추가
-            res.setHeader(header, token);
-        } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage());
-        }
-    }
 
     // 2. JWT Package for Cookie
     public void addJwtToCookie(String Header, String token,  HttpServletResponse res) {

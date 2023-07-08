@@ -64,10 +64,8 @@ public class UserService {
 
         claims.put("username", user.getUsername());
 
-        // JWT 생성 후 쿠키로 res에 추가
         String token = jwtUtil.createToken(claims);
-//        jwtUtil.addJwtToCookie(headerName, token, res);
-        jwtUtil.addJwtToHeaders(headerName, token, res);
+        res.addHeader(headerName, token);
     }
 
 
