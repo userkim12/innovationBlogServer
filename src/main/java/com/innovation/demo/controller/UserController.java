@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto, HttpServletResponse res){
-        userService.login(loginRequestDto, res);
-
-        return ResponseEntity.ok().body("login ok!");
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto, HttpServletResponse res){
+//        userService.login(loginRequestDto, res);
+//
+//        return ResponseEntity.ok().body("login ok!");
+//    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid LoginRequestDto loginRequestDto){

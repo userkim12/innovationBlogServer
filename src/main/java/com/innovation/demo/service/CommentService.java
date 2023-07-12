@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,9 +26,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public Comment createComment(CommentRequestDto commentRequestDto, String token) {
-        System.out.println("Token value in createComment: " + token);
         String username = jwtUtil.getUsernameFromToken(token);
+        System.out.println("createComment에서 username 화긴 -------- "+ username);
         User user = userRepository.findByUsername(username).orElse(null);
+        System.out.println("createComment에서 user.getUsername(): " + user.getUsername());
         System.out.println(commentRequestDto.getBoardId());
         Board board = boardRepository.findById(commentRequestDto.getBoardId()).orElseThrow(
                 () -> new NullPointerException("존재하지 않는 게시글입니다.")

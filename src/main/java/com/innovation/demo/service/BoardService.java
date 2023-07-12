@@ -8,8 +8,8 @@ import com.innovation.demo.entity.User;
 import com.innovation.demo.mapper.BoardMapper;
 import com.innovation.demo.repository.BoardRepository;
 import com.innovation.demo.repository.UserRepository;
+import com.innovation.demo.security.UserDetailsImpl;
 import com.innovation.demo.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,8 +33,8 @@ public class BoardService {
     @Value("${admin.username}")
     private String adminName;
 
-    public Board createBoard(BoardPostDto boardPostDto, String token) {
-        String username = jwtUtil.getUsernameFromToken(token);
+    public Board createBoard(UserDetailsImpl userDetails, BoardPostDto boardPostDto) {
+        String username = userDetails.getUsername();
 
         Board board = new Board(boardPostDto.getTitle(), boardPostDto.getContent());
 
@@ -59,12 +59,12 @@ public class BoardService {
         return boardRepository.findAllByOrderByCreatedAtDesc();
     }
 
-    public Board updateBoard(long boardId, BoardPatchDto boardPatchDto, String token) {
+    public Board updateBoard(long boardId, BoardPatchDto boardPatchDto, UserDetailsImpl userDetails) {
         Board board = boardMapper.BoardPatchDtoToBoard(boardPatchDto);
         Board findBoard = findVerifiedBoard(boardId);
 
         String username1 = findBoard.getUser().getUsername();
-        String username2 = jwtUtil.getUsernameFromToken(token);
+        String username2 = userDetails.getUsername();
 
         if(!username2.equals(adminName)) {
             compareUsernames(username1, username2);
@@ -77,11 +77,11 @@ public class BoardService {
     }
 
 
-    public void deleteBoard(long boardId, String token) {
+    public void deleteBoard(long boardId, UserDetailsImpl userDetails) {
         Board findBoard = findVerifiedBoard(boardId);
 
         String username1 = findBoard.getUser().getUsername();
-        String username2 = jwtUtil.getUsernameFromToken(token);
+        String username2 = userDetails.getUsername();
 
         if(!username2.equals(adminName)) {
             compareUsernames(username1, username2);

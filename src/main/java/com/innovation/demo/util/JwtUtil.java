@@ -23,6 +23,8 @@ import java.util.Map;
 @Slf4j(topic = "Token Util")
 public class JwtUtil implements InitializingBean {
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
     // Token Sign
     public static final String BEARER_PREFIX = "Bearer ";
 
@@ -117,8 +119,8 @@ public class JwtUtil implements InitializingBean {
     }
 
     // 4-1. Get username for Request
-    public String getUsernameFromRequest(String TokenName, HttpServletRequest request){
-        String Token = substringToken(getTokenFromRequest(TokenName, request));
+    public String getUsernameFromRequest(HttpServletRequest request){
+        String Token = substringToken(getTokenFromRequest(request));
         log.error(Token);
         if(validateToken(Token)){
             Claims body = getUserInfoFromToken(Token);
@@ -130,20 +132,25 @@ public class JwtUtil implements InitializingBean {
     }
 
     // 5. HttpServletRequest for Get Cookie (Name)
-    public String getTokenFromRequest(String TokenName, HttpServletRequest req) {
-        Cookie[] cookies = req.getCookies();
-        if(cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(TokenName)) {
-                    try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
-            }
-        }
-        return null;
+//    public String getTokenFromRequest(HttpServletRequest req) {
+//        Cookie[] cookies = req.getCookies();
+//        if(cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
+//                    try {
+//                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
+//                    } catch (UnsupportedEncodingException e) {
+//                        return null;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
+    public String getTokenFromRequest(HttpServletRequest req) {
+
+        return req.getHeader(AUTHORIZATION_HEADER);
     }
 
     // Sub Fuction. Decode Cookie
@@ -165,7 +172,12 @@ public class JwtUtil implements InitializingBean {
     }
 
     public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String getUsernameFromToken(String token) {

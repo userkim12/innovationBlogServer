@@ -47,26 +47,26 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse res) {
-        String username = loginRequestDto.getUsername();
-        String password = loginRequestDto.getPassword();
-
-        // 회원 가입여부 확인
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
-        );
-
-        // 비밀번호 확인
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
-        }
-        Map<String, String> claims = new HashMap<>();
-
-        claims.put("username", user.getUsername());
-
-        String token = jwtUtil.createToken(claims);
-        res.addHeader(headerName, token);
-    }
+//    public void login(LoginRequestDto loginRequestDto, HttpServletResponse res) {
+//        String username = loginRequestDto.getUsername();
+//        String password = loginRequestDto.getPassword();
+//
+//        // 회원 가입여부 확인
+//        User user = userRepository.findByUsername(username).orElseThrow(
+//                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+//        );
+//
+//        // 비밀번호 확인
+//        if (!passwordEncoder.matches(password, user.getPassword())) {
+//            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+//        }
+//        Map<String, String> claims = new HashMap<>();
+//
+//        claims.put("username", user.getUsername());
+//
+//        String token = jwtUtil.createToken(claims);
+//        res.addHeader(headerName, token);
+//    }
 
 
 }
